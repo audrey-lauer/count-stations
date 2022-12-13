@@ -153,7 +153,9 @@ with col1:
 with col2:
     st.header("Interactive map")
 
-    year_map = st.selectbox('Year to show on plot', ['all years'] + list( np.arange(year_start, year_end,1) ) )
+    #year_map = st.number_input('Year to show on map', 1950,1999)
+    #year_map = st.selectbox('Year to show on plot', ['all years'] + list( np.arange(year_start, year_end,1) ) )
+    year_map = st.select_slider('Year to show on plot', np.arange(year_start, year_end,1))
 
     df_map_data = read_map_data(year_map, meteo_variable[variable])
 
