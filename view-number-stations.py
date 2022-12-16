@@ -32,7 +32,7 @@ st.set_page_config(layout="wide")
 # Functions #
 #############
 @st.cache(hash_funcs={folium.folium.Map: lambda _: None}, allow_output_mutation=True)
-def make_map(df_station_info, variable, field_to_color_by):
+def make_map(df_map_data, variable, field_to_color_by):
     main_map = folium.Map(location=(49, -105), zoom_start=3)
 
     # Maximum value
@@ -75,18 +75,24 @@ def make_map(df_station_info, variable, field_to_color_by):
 
     return main_map
 
-def read_map_data(year, variable):
+def read_map_data(year, variable, data_type):
 
     month_list = ['01','02','03','04','05','06','07','08','09','10','11','12']
     
-    df = pd.read_pickle('data/spread/'+str(year)+'-'+variable+'.pkl')
-    df['year'] = df[month_list].sum(axis=1)
+    if data_type == 'ISD':
+        df = pd.read_pickle('data/spread/'+str(year)+'-'+variable+'.pkl')
+    elif data_type == 'ADE':
+        df = pd.read_pickle('data/burp/ade/'+str(year)+'-'+variable+'.pkl')
+        df['lon'] = df['lon'] - 360.
 
-    df = df[df['year'] > 0]
+    df['year'] = df[month_list].sum(axis=1)
+    print(df)
+
+    df = df[df['year'] > 10]
     
     return df
 
-def plot_timeserie(year_start, year_end, variable):
+def plot_timeserie(year_start, year_end, variable, data_type):
     year_list = np.arange(year_start,year_end,1)
     year_list = [str(y) for y in year_list]
     
@@ -132,20 +138,28 @@ meteo_variable = {
 ##########
 st.title('Visualization of number of observations')
 
+data_type = st.selectbox('Observation dataset',['ISD','ADE'])
+
 col1, col2 = st.columns([0.5,0.5])
 
 with col1:
     st.header("Timeserie")
 
-    year_start, year_end = st.slider("Year range of timeserie",
-                                     min_value=1950,
-                                     max_value=2018,
-                                     value=(1950, 2000))
+    if data_type == 'ISD':
+        year_start, year_end = st.slider("Year range of timeserie",
+                                         min_value=1950,
+                                         max_value=2018,
+                                         value=(1950, 2000))
+    elif data_type == 'ADE':
+        year_start, year_end = st.slider("Year range of timeserie",
+                                         min_value=1990,
+                                         max_value=2018,
+                                         value=(1990, 2018))
 
     variable_list = meteo_variable.keys()
     variable = st.selectbox('Variable',variable_list)
 
-    fig = plot_timeserie(year_start, year_end, variable)
+    fig = plot_timeserie(year_start, year_end, variable, data_type)
 
     st.write(fig)
 
@@ -157,7 +171,7 @@ with col2:
     #year_map = st.selectbox('Year to show on plot', ['all years'] + list( np.arange(year_start, year_end,1) ) )
     year_map = st.select_slider('Year to show on plot', np.arange(year_start, year_end,1))
 
-    df_map_data = read_map_data(year_map, meteo_variable[variable])
+    df_map_data = read_map_data(year_map, meteo_variable[variable], data_type)
 
     main_map = make_map(df_map_data, variable, 'year') 
     st_data = st_folium(main_map, width=850, height=700)
