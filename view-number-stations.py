@@ -81,6 +81,10 @@ def read_map_data(year, variable, data_type):
     
     if data_type == 'ISD':
         df = pd.read_pickle('data/spread/'+str(year)+'-'+variable+'.pkl')
+        #df = pd.read_pickle('data/burp/isd/'+str(year)+'-'+variable+'.pkl')
+    elif data_type == 'ISD-old':
+        df = pd.read_pickle('data/burp/isd-old/'+str(year)+'-'+variable+'.pkl')
+        df['lon'] = df['lon'] - 360.
     elif data_type == 'ADE':
         df = pd.read_pickle('data/burp/ade/'+str(year)+'-'+variable+'.pkl')
         df['lon'] = df['lon'] - 360.
@@ -88,7 +92,10 @@ def read_map_data(year, variable, data_type):
     df['year'] = df[month_list].sum(axis=1)
     print(df)
 
-    df = df[df['year'] > 10]
+    if data_type == 'ISD' or data_type == 'ISD-old':
+        df = df[df['year'] > 0]
+    elif data_type == 'ADE':
+        df = df[df['year'] > 10]
     
     return df
 
@@ -103,7 +110,13 @@ def plot_timeserie(year_start, year_end, variable, data_type):
         filename = year+'-number-of-stations.csv'
     
         try:
-            df_temp = pd.read_csv('data/number-of-stations/'+filename)
+            if data_type == 'ISD':
+                df_temp = pd.read_csv('data/number-of-stations/isd/'+filename)
+            elif data_type == 'ISD-old':
+                df_temp = pd.read_csv('data/number-of-stations/isd-old/'+filename)
+            else:
+                df_temp = pd.read_csv('data/number-of-stations/isd/'+filename)
+             
             df = df.append(df_temp, ignore_index=True)
         except:
             continue
@@ -138,7 +151,7 @@ meteo_variable = {
 ##########
 st.title('Visualization of number of observations')
 
-data_type = st.selectbox('Observation dataset',['ISD','ADE'])
+data_type = st.selectbox('Observation dataset',['ISD', 'ISD-old','ADE'])
 
 col1, col2 = st.columns([0.5,0.5])
 
@@ -150,6 +163,11 @@ with col1:
                                          min_value=1950,
                                          max_value=2018,
                                          value=(1950, 2000))
+    elif data_type == 'ISD-old':
+        year_start, year_end = st.slider("Year range of timeserie",
+                                         min_value=1950,
+                                         max_value=2000,
+                                         value=(1980, 2000))
     elif data_type == 'ADE':
         year_start, year_end = st.slider("Year range of timeserie",
                                          min_value=1990,
