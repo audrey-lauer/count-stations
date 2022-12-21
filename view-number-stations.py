@@ -95,7 +95,9 @@ def read_map_data(year, variable, data_type):
     if data_type == 'ISD' or data_type == 'ISD-old':
         df = df[df['year'] > 0]
     elif data_type == 'ADE':
-        df = df[df['year'] > 10]
+        df = df[df['year'] > 0]
+        df = df[df['idtyp'] != 13]
+        df = df[df['idtyp'] != 147]
     
     return df
 
@@ -114,8 +116,8 @@ def plot_timeserie(year_start, year_end, variable, data_type):
                 df_temp = pd.read_csv('data/number-of-stations/isd/'+filename)
             elif data_type == 'ISD-old':
                 df_temp = pd.read_csv('data/number-of-stations/isd-old/'+filename)
-            else:
-                df_temp = pd.read_csv('data/number-of-stations/isd/'+filename)
+            elif data_type == 'ADE':
+                df_temp = pd.read_csv('data/number-of-stations/ade/'+filename)
              
             df = df.append(df_temp, ignore_index=True)
         except:
@@ -170,9 +172,9 @@ with col1:
                                          value=(1980, 2000))
     elif data_type == 'ADE':
         year_start, year_end = st.slider("Year range of timeserie",
-                                         min_value=1990,
+                                         min_value=1994,
                                          max_value=2018,
-                                         value=(1990, 2018))
+                                         value=(1994, 2000))
 
     variable_list = meteo_variable.keys()
     variable = st.selectbox('Variable',variable_list)

@@ -17,10 +17,10 @@ meteo_variable = {
   'snow_dept':  '13013'
 }
 
-year_list = np.arange(1992, 2000, 1)
+year_list = np.arange(2000, 2002, 1)
 year_list = [str(y) for y in year_list]
 
-obs_type = 'isd-old'
+obs_type = 'ade'
 
 for year in year_list:
     # Create dataframe with all dates in year
@@ -47,7 +47,7 @@ for year in year_list:
                 count[variable].loc[count['date'] == date] = (df[meteo_variable[variable]].values >= 0).sum()
 
     # 1 file per month
-    elif obs_type == 'isd-old':
+    elif obs_type == 'isd-old' or obs_type == 'ade':
 
         input_path = '/home/aul001/reanalyse/validation-v3/count-stations/data/burp/'+obs_type+'/temp/'
 
@@ -58,14 +58,26 @@ for year in year_list:
             date_range2 = list(set(date_range2))
 
             for date in date_range2:
-                date2 = pd.to_datetime('19'+str(date), format='%Y-%m-%d')
+                try:
+                    if int(year) < 2000:
+                        date2 = pd.to_datetime('19'+str(date), format='%Y-%m-%d')
+                    elif int(year) >= 2000:
+                        date2 = pd.to_datetime(str(date), format='%Y-%m-%d')
 
-                df_temp = df.loc[df['date'] == date]
+                    df_temp = df.loc[df['date'] == date]
     
-                # Count number of records
-                for variable in meteo_variable.keys():
-                    df_temp2 = df_temp.loc[ df_temp['e_bufrid'] == int(meteo_variable[variable]) ]
-                    count[variable].loc[count['date'] == date2] = (df_temp2['rval'].values >= 0).sum()
+                    # Count number of records
+                    for variable in meteo_variable.keys():
+                        df_temp2 = df_temp.loc[ df_temp['e_bufrid'] == int(meteo_variable[variable]) ]
+                        
+                        if obs_type == 'ade':
+                            df_temp2 = df_temp2.loc[ df_temp2['idtyp'] != 13 ] # Enlever stations SHIP
+                            df_temp2 = df_temp2.loc[ df_temp2['idtyp'] != 147] # Enlever stations ASHIP
+
+                        count[variable].loc[count['date'] == date2] = (df_temp2['rval'].values >= 0).sum()
+
+                except:
+                    continue
 
     count = count.sort_values('date')
     print(count)
