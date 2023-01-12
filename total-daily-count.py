@@ -17,10 +17,10 @@ meteo_variable = {
   'snow_dept':  '13013'
 }
 
-year_list = np.arange(2000, 2002, 1)
+year_list = np.arange(1993, 2002, 1)
 year_list = [str(y) for y in year_list]
 
-obs_type = 'ade'
+obs_type = 'from-gerard'
 
 for year in year_list:
     # Create dataframe with all dates in year
@@ -47,7 +47,7 @@ for year in year_list:
                 count[variable].loc[count['date'] == date] = (df[meteo_variable[variable]].values >= 0).sum()
 
     # 1 file per month
-    elif obs_type == 'isd-old' or obs_type == 'ade':
+    elif obs_type == 'isd-old' or obs_type == 'ade' or obs_type == 'from-gerard':
 
         input_path = '/home/aul001/reanalyse/validation-v3/count-stations/data/burp/'+obs_type+'/temp/'
 

@@ -8,12 +8,14 @@ from multiprocessing import Pool
 
 def read_data(year, month):
 
-    isd_or_ade = 'ade'
+    isd_or_ade = 'from-gerard'
 
     if isd_or_ade == 'isd':
         input_path = '/home/mbu001/ss6/data_observations/BURP/ISD/v2_nonfiltered/'+year+'/all'
     elif isd_or_ade == 'ade':
         input_path = '/home/smco813/ss5/data_obs/rarc2/link2burp4allyears/'
+    elif isd_or_ade == 'from-gerard':
+        input_path = '/home/aul001/dd/data/obs-from-gerard'
 
     meteo_variable = {
       'temperature':12004.0,
@@ -27,7 +29,8 @@ def read_data(year, month):
     }
 
     #all_files = glob.glob(os.path.join(input_path, year+month+"*"))
-    all_files = glob.glob(os.path.join(input_path+'/s*/*/',year+month+"*"))
+    #all_files = glob.glob(os.path.join(input_path+'/s*/*/',year+month+"*"))
+    all_files = glob.glob(os.path.join(input_path+'/s*/',year+month+"*"))
     all_files.sort()
     #all_files = all_files[0:10]
 
@@ -55,7 +58,7 @@ def read_data(year, month):
 
 def count_data(year, month):
 
-    isd_or_ade = 'ade'
+    isd_or_ade = 'from-gerard'
 
     meteo_variable = {
       'temperature':12004.0,
@@ -72,7 +75,7 @@ def count_data(year, month):
 
     colonnes = [x+' '+month for x in meteo_variable.keys() ] 
 
-    df = pd.DataFrame(columns=['ID','lon','lat']+colonnes)
+    df = pd.DataFrame(columns=['ID','idtyp','lon','lat']+colonnes)
     df_data = pd.read_pickle('/home/aul001/reanalyse/validation-v3/count-stations/data/burp/'+isd_or_ade+'/temp/data-'+year+'-'+month+'.pkl')
 
     # Station ID list
@@ -81,6 +84,7 @@ def count_data(year, month):
     lat_list = df_data['lat']
 
     df['ID']  = id_list
+    df['idtyp'] = df_data['idtyp']
     df['lon'] = lon_list
     df['lat'] = lat_list
     df = df.drop_duplicates(subset='ID')
@@ -103,7 +107,7 @@ def count_data(year, month):
 
 if __name__ == '__main__':
 
-    isd_or_ade = 'ade'
+    isd_or_ade = 'from-gerard'
 
     meteo_variable = {
       'temperature':12004.0,
@@ -119,10 +123,9 @@ if __name__ == '__main__':
     # Start pool of multiprocesses
     pool = Pool(12)
 
-    #year_list = np.arange(1950, 2000, 1)
-    year_list = np.arange(1994, 2018, 1)
+    year_list = np.arange(1998, 2002, 1)
     year_list = [str(y) for y in year_list]
-    year_list = ['1994','1995']
+    #year_list = ['1992']
     
     month_list = ['01','02','03','04','05','06','07','08','09','10','11','12'] 
 
@@ -132,7 +135,6 @@ if __name__ == '__main__':
     
         # Iteration on each month of the year
         df1 = pool.starmap(read_data, [(year,'01'), (year,'02'), (year,'03'), (year,'04'), (year,'05'), (year,'06'), (year,'07'), (year,'08'), (year,'09'), (year,'10'), (year,'11'), (year,'12')])
-        #df1 = pool.starmap(read_data, [(year,'08')])
 
         df_all = pool.starmap(count_data, [(year,'01'), (year,'02'), (year,'03'), (year,'04'), (year,'05'), (year,'06'), (year,'07'), (year,'08'), (year,'09'), (year,'10'), (year,'11'), (year,'12')])
 
@@ -140,14 +142,14 @@ if __name__ == '__main__':
             if i == 0:
                 df = df_all[i]
             else:
-                df = pd.merge(df, df_all[i], on=['ID','lon','lat'], how='outer')
+                df = pd.merge(df, df_all[i], on=['ID','idtyp','lon','lat'], how='outer')
 
         for variable_name in meteo_variable.keys():
             variable = meteo_variable[variable_name]
             column_list = [ variable_name+' '+m for m in month_list  ]
             rename_dict = dict(zip(column_list, month_list))
 
-            df_var = df[['ID','lon','lat'] + column_list]
+            df_var = df[['ID','idtyp','lon','lat'] + column_list]
             df_var = df_var.rename(columns=rename_dict)
 
             df_var.to_pickle('data/burp/'+isd_or_ade+'/'+year+'-'+str(int(variable))+'.pkl')

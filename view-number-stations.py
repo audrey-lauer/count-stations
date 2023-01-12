@@ -88,9 +88,11 @@ def read_map_data(year, variable, data_type):
     elif data_type == 'ADE':
         df = pd.read_pickle('data/burp/ade/'+str(year)+'-'+variable+'.pkl')
         df['lon'] = df['lon'] - 360.
+    elif data_type == 'FROM GERARD':
+        df = pd.read_pickle('data/burp/from-gerard/'+str(year)+'-'+variable+'.pkl')
+        df['lon'] = df['lon'] - 360.
 
     df['year'] = df[month_list].sum(axis=1)
-    print(df)
 
     if data_type == 'ISD' or data_type == 'ISD-old':
         df = df[df['year'] > 0]
@@ -98,6 +100,8 @@ def read_map_data(year, variable, data_type):
         df = df[df['year'] > 0]
         df = df[df['idtyp'] != 13]
         df = df[df['idtyp'] != 147]
+    elif data_type == 'FROM GERARD':
+        df = df[df['year'] > 0]
     
     return df
 
@@ -118,6 +122,8 @@ def plot_timeserie(year_start, year_end, variable, data_type):
                 df_temp = pd.read_csv('data/number-of-stations/isd-old/'+filename)
             elif data_type == 'ADE':
                 df_temp = pd.read_csv('data/number-of-stations/ade/'+filename)
+            elif data_type == 'FROM GERARD':
+                df_temp = pd.read_csv('data/number-of-stations/from-gerard/'+filename)
              
             df = df.append(df_temp, ignore_index=True)
         except:
@@ -153,7 +159,7 @@ meteo_variable = {
 ##########
 st.title('Visualization of number of observations')
 
-data_type = st.selectbox('Observation dataset',['ISD', 'ISD-old','ADE'])
+data_type = st.selectbox('Observation dataset',['ISD', 'ISD-old','ADE','FROM GERARD'])
 
 col1, col2 = st.columns([0.5,0.5])
 
@@ -175,6 +181,11 @@ with col1:
                                          min_value=1994,
                                          max_value=2018,
                                          value=(1994, 2000))
+    elif data_type == 'FROM GERARD':
+        year_start, year_end = st.slider("Year range of timeserie",
+                                         min_value=1953,
+                                         max_value=2002,
+                                         value=(1953, 2002))
 
     variable_list = meteo_variable.keys()
     variable = st.selectbox('Variable',variable_list)
