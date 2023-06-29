@@ -154,8 +154,8 @@ meteo_variable = {
   'precip_03h': '13020',
   'precip_06h': '13021',
   'precip_12h': '13022',
-  'precip_24h': '13023',
-  'snow_dept': '13013'
+  'precip_24h': '13023'#,
+  #'snow_dept': '13013'
 }
 
 
