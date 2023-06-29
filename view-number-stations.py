@@ -93,7 +93,7 @@ def read_map_data(year, variable, data_type):
         df['lon'] = df['lon'] - 360.
     elif data_type == 'HadISD':
         df = pd.read_pickle('data/burp/hadisd/'+str(year)+'-'+variable+'.pkl')
-        df['lon'] = df['lon'] - 360.
+        df['lon'] = df['lon']# - 360.
 
     df['year'] = df[month_list].sum(axis=1)
 
