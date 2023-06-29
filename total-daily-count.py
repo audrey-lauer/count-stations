@@ -13,14 +13,15 @@ meteo_variable = {
   'precip_03h': '13020',
   'precip_06h': '13021',
   'precip_12h': '13022',
-  'precip_24h': '13023',
-  'snow_dept':  '13013'
+  'precip_24h': '13023'#,
+  #'snow_dept':  '13013'
 }
 
 year_list = np.arange(1993, 2002, 1)
 year_list = [str(y) for y in year_list]
+year_list = ['2013']
 
-obs_type = 'from-gerard'
+obs_type = 'hadisd'
 
 for year in year_list:
     # Create dataframe with all dates in year
@@ -47,7 +48,7 @@ for year in year_list:
                 count[variable].loc[count['date'] == date] = (df[meteo_variable[variable]].values >= 0).sum()
 
     # 1 file per month
-    elif obs_type == 'isd-old' or obs_type == 'ade' or obs_type == 'from-gerard':
+    elif obs_type == 'isd-old' or obs_type == 'ade' or obs_type == 'from-gerard' or obs_type == 'hadisd':
 
         input_path = '/home/aul001/reanalyse/validation-v3/count-stations/data/burp/'+obs_type+'/temp/'
 
