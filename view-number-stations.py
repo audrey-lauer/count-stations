@@ -196,7 +196,7 @@ with col1:
         year_start, year_end = st.slider("Year range of timeserie",
                                          min_value=2013,
                                          max_value=2015,
-                                         value=(2013, 2015))
+                                         value=(2012, 2016))
 
     variable_list = meteo_variable.keys()
     variable = st.selectbox('Variable',variable_list)
