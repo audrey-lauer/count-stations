@@ -194,9 +194,9 @@ with col1:
 
     elif data_type == 'HadISD':
         year_start, year_end = st.slider("Year range of timeserie",
-                                         min_value=2013,
-                                         max_value=2015,
-                                         value=(2012, 2016))
+                                         min_value=2012,
+                                         max_value=2016,
+                                         value=(2013, 2014))
 
     variable_list = meteo_variable.keys()
     variable = st.selectbox('Variable',variable_list)
