@@ -8,7 +8,7 @@ from multiprocessing import Pool
 
 def read_data(year, month):
 
-    isd_or_ade = 'from-gerard'
+    isd_or_ade = 'hadisd'
 
     if isd_or_ade == 'isd':
         input_path = '/home/mbu001/ss6/data_observations/BURP/ISD/v2_nonfiltered/'+year+'/all'
@@ -16,6 +16,8 @@ def read_data(year, month):
         input_path = '/home/smco813/ss5/data_obs/rarc2/link2burp4allyears/'
     elif isd_or_ade == 'from-gerard':
         input_path = '/home/aul001/dd/data/obs-from-gerard'
+    elif isd_or_ade == 'hadisd':
+        input_path = '/home/aul001/dd/data/obs/hadISD/burp/surface/synop/'
 
     meteo_variable = {
       'temperature':12004.0,
@@ -24,13 +26,13 @@ def read_data(year, month):
       'precip_03h': 13020.0,
       'precip_06h': 13021.0,
       'precip_12h': 13022.0,
-      'precip_24h': 13023.0,
-      'snow_depth': 13013.0
+      'precip_24h': 13023.0#,
+      #'snow_depth': 13013.0
     }
 
-    #all_files = glob.glob(os.path.join(input_path, year+month+"*"))
+    all_files = glob.glob(os.path.join(input_path, year+month+"*"))
     #all_files = glob.glob(os.path.join(input_path+'/s*/*/',year+month+"*"))
-    all_files = glob.glob(os.path.join(input_path+'/s*/',year+month+"*"))
+    #all_files = glob.glob(os.path.join(input_path+'/s*/',year+month+"*"))
     all_files.sort()
     #all_files = all_files[0:10]
 
@@ -58,7 +60,7 @@ def read_data(year, month):
 
 def count_data(year, month):
 
-    isd_or_ade = 'from-gerard'
+    isd_or_ade = 'hadisd'
 
     meteo_variable = {
       'temperature':12004.0,
@@ -67,8 +69,8 @@ def count_data(year, month):
       'precip_03h': 13020.0,
       'precip_06h': 13021.0,
       'precip_12h': 13022.0,
-      'precip_24h': 13023.0,
-      'snow_depth': 13013.0
+      'precip_24h': 13023.0#,
+      #'snow_depth': 13013.0
     }
  
     input_path = '/home/aul001/reanalyse/validation-v3/count-stations/data/burp/'+isd_or_ade+'/temp/'
@@ -107,7 +109,7 @@ def count_data(year, month):
 
 if __name__ == '__main__':
 
-    isd_or_ade = 'from-gerard'
+    isd_or_ade = 'hadisd'
 
     meteo_variable = {
       'temperature':12004.0,
@@ -116,16 +118,16 @@ if __name__ == '__main__':
       'precip_03h': 13020.0,
       'precip_06h': 13021.0,
       'precip_12h': 13022.0,
-      'precip_24h': 13023.0,
-      'snow_depth': 13013.0
+      'precip_24h': 13023.0#,
+      #'snow_depth': 13013.0
     }
  
     # Start pool of multiprocesses
     pool = Pool(12)
 
-    year_list = np.arange(1998, 2002, 1)
-    year_list = [str(y) for y in year_list]
-    #year_list = ['1992']
+    #year_list = np.arange(2013, 2014, 1)
+    #year_list = [str(y) for y in year_list]
+    year_list = ['2014']
     
     month_list = ['01','02','03','04','05','06','07','08','09','10','11','12'] 
 

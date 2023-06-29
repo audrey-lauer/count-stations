@@ -91,10 +91,13 @@ def read_map_data(year, variable, data_type):
     elif data_type == 'FROM GERARD':
         df = pd.read_pickle('data/burp/from-gerard/'+str(year)+'-'+variable+'.pkl')
         df['lon'] = df['lon'] - 360.
+    elif data_type == 'HadISD':
+        df = pd.read_pickle('data/burp/hadisd/'+str(year)+'-'+variable+'.pkl')
+        df['lon'] = df['lon'] - 360.
 
     df['year'] = df[month_list].sum(axis=1)
 
-    if data_type == 'ISD' or data_type == 'ISD-old':
+    if data_type == 'ISD' or data_type == 'ISD-old' or data_type == 'HadISD':
         df = df[df['year'] > 0]
     elif data_type == 'ADE':
         df = df[df['year'] > 0]
@@ -124,6 +127,8 @@ def plot_timeserie(year_start, year_end, variable, data_type):
                 df_temp = pd.read_csv('data/number-of-stations/ade/'+filename)
             elif data_type == 'FROM GERARD':
                 df_temp = pd.read_csv('data/number-of-stations/from-gerard/'+filename)
+            elif data_type == 'HadISD':
+                df_temp = pd.read_csv('data/number-of-stations/hadisd/'+filename)
              
             df = df.append(df_temp, ignore_index=True)
         except:
@@ -159,7 +164,7 @@ meteo_variable = {
 ##########
 st.title('Visualization of number of observations')
 
-data_type = st.selectbox('Observation dataset',['ISD', 'ISD-old','ADE','FROM GERARD'])
+data_type = st.selectbox('Observation dataset',['ISD', 'ISD-old','ADE','FROM GERARD', 'HadISD'])
 
 col1, col2 = st.columns([0.5,0.5])
 
@@ -186,6 +191,12 @@ with col1:
                                          min_value=1953,
                                          max_value=2002,
                                          value=(1953, 2002))
+
+    elif data_type == 'HadISD':
+        year_start, year_end = st.slider("Year range of timeserie",
+                                         min_value=2013,
+                                         max_value=2014,
+                                         value=(2013, 2014))
 
     variable_list = meteo_variable.keys()
     variable = st.selectbox('Variable',variable_list)
