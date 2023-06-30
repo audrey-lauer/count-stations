@@ -96,15 +96,11 @@ def read_map_data(year, variable, data_type):
         df['lon'] = df['lon'] - 360.
 
     df['year'] = df[month_list].sum(axis=1)
+    df = df[df['year'] > 0]
 
-    if data_type == 'ISD' or data_type == 'ISD-old' or data_type == 'HadISD':
-        df = df[df['year'] > 0]
-    elif data_type == 'ADE':
-        df = df[df['year'] > 0]
+    if data_type == 'ADE':
         df = df[df['idtyp'] != 13]
         df = df[df['idtyp'] != 147]
-    elif data_type == 'FROM GERARD':
-        df = df[df['year'] > 0]
 
     # Crop to North America only
     df = df[(df['lat'] < 90)  & (df['lat'] > 10)  ]
