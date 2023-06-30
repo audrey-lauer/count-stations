@@ -105,6 +105,10 @@ def read_map_data(year, variable, data_type):
         df = df[df['idtyp'] != 147]
     elif data_type == 'FROM GERARD':
         df = df[df['year'] > 0]
+
+    # Crop to North America only
+    df = df[(df['lat'] < 90)  & (df['lat'] > 10)  ]
+    df = df[(df['lon'] < -13+360.) & (df['lon'] > -178+360.)]
     
     return df
 
