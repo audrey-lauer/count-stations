@@ -108,7 +108,7 @@ def read_map_data(year, variable, data_type):
 
     # Crop to North America only
     df = df[(df['lat'] < 90)  & (df['lat'] > 10)  ]
-    df = df[(df['lon'] < -13+360.) & (df['lon'] > -178+360.)]
+    df = df[(df['lon'] < -13) & (df['lon'] > -178)]
     
     return df
 
