@@ -20,7 +20,6 @@ params = {'legend.fontsize': 'medium',
 pylab.rcParams.update(params)
 
 matplotlib.use("agg")
-_lock = RendererAgg.lock
 
 # Compability between pandas versions and mpl
 pd.plotting.register_matplotlib_converters()
@@ -31,7 +30,7 @@ st.set_page_config(layout="wide")
 #############
 # Functions #
 #############
-#@st.cache(hash_funcs={folium.folium.Map: lambda _: None} )
+@st.cache(hash_funcs={folium.folium.Map: lambda _: None} )
 def make_map(df_map_data, variable, field_to_color_by):
     main_map = folium.Map(location=(49, -105), zoom_start=3)
 
